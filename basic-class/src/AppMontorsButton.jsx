@@ -4,6 +4,11 @@ import personReducer from './reducer/person-reducer';
 export default function AppMentorsButton() {
   const [person, dispatch] = useReducer(personReducer, initialPerson);
 
+  /** 
+  =============== useCallback
+     useCallback 을 사용해서 리랜더링 될때 마다가 아닌 딱 한번만 함수 생성
+    (이걸 안하면 리랜더링 될때마다 생성)
+  */
   const handleUpdate = useCallback(() => {
     const prev = prompt(`누구의 이름을 바꾸고 싶은가요?`);
     const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
@@ -34,15 +39,22 @@ export default function AppMentorsButton() {
           </li>
         ))}
       </ul>
-      <Button text='멘토 이름 바꾸기' onClick={handleUpdate} />
+      <Button text='멘토 이름 바꾸기' onClick={handleUpdate} />,
       <Button text='삭제하기' onClick={handleDelete} />
       <Button text='멘토 추가하기' onClick={handleAdd} />
     </div>
   );
 }
 
+/* ====memo 
+   값 자체가 바뀌지않았다면 리랜더링을 해주지마
+ */
 const Button = memo(({ text, onClick }) => {
   console.log('Button', text, 're-rendering 😜');
+
+  /* ====useMemo 
+    useMemo 를 사용해서 처음할때만 calculateSomething 수행되게하기
+  */
   const result = useMemo(() => calculateSomething(), []);
   return (
     <button
@@ -58,6 +70,7 @@ const Button = memo(({ text, onClick }) => {
     </button>
   );
 });
+Button.displayName = 'Button';
 
 function calculateSomething() {
   for (let i = 0; i < 10000; i++) {
